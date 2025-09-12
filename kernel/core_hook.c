@@ -47,7 +47,6 @@
 #include "manager.h"
 #include "selinux/selinux.h"
 #include "throne_tracker.h"
-#include "throne_tracker.h"
 #include "kernel_compat.h"
 #ifdef CONFIG_KSU_SUSFS
 bool susfs_is_allow_su(void)
