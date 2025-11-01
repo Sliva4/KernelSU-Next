@@ -26,7 +26,7 @@
 
 #include <linux/fs.h>
 #include <linux/namei.h>
-
+#include <linux/suspicious.h>
 #ifdef MODULE
 #include <linux/list.h>
 #include <linux/irqflags.h>
@@ -34,7 +34,6 @@
 #include <linux/rcupdate.h>
 #include <linux/vmalloc.h>
 #endif
-
 #ifdef CONFIG_KSU_SUSFS
 #include <linux/susfs.h>
 #endif // #ifdef CONFIG_KSU_SUSFS
@@ -50,7 +49,6 @@
 #include "throne_tracker.h"
 #include "throne_tracker.h"
 #include "kernel_compat.h"
-
 #ifdef CONFIG_KSU_SUSFS
 bool susfs_is_allow_su(void)
 {
@@ -398,7 +396,22 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
 		}
 		return 0;
 	}
-
+#ifdef CONFIG_SLIVA_PATCH
+	if (arg2 == 70) {
+		u32 ret = get_sus_multi(arg3);
+		if (copy_to_user(arg4, &ret, sizeof(ret)) {
+			pr_err("prctl reply error, cmd: %lu\n", arg2);
+		}
+		return 0;
+	}
+	if (arg2 == 71) {
+		u32 ret = set_suspicious_path(arg3,arg4);
+		if (copy_to_user(arg5, &ret, sizeof(ret)) {
+			pr_err("prctl reply error, cmd: %lu\n", arg2);
+		}
+		return 0;
+	}
+#endif
 	if (arg2 == CMD_GET_MANAGER_UID) {
 		uid_t manager_uid = ksu_get_manager_uid();
 		if (copy_to_user(arg3, &manager_uid, sizeof(manager_uid))) {
@@ -992,11 +1005,7 @@ static bool should_umount(struct path *path)
 
 static int ksu_umount_mnt(struct path *path, int flags)
 {
-#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 9, 0) || defined(KSU_UMOUNT)
 	return path_umount(path, flags);
-#else
-	// TODO: umount for non GKI kernel
-	return -ENOSYS;
 #endif
 }
 
