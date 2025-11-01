@@ -399,14 +399,14 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
 #ifdef CONFIG_SLIVA_PATCH
 	if (arg2 == 70) {
 		u32 ret = get_sus_multi(arg3);
-		if (copy_to_user(arg4, &ret, sizeof(ret)) {
+		if (copy_to_user(arg4, &ret, sizeof(ret))) {
 			pr_err("prctl reply error, cmd: %lu\n", arg2);
 		}
 		return 0;
 	}
 	if (arg2 == 71) {
 		u32 ret = set_suspicious_path(arg3,arg4);
-		if (copy_to_user(arg5, &ret, sizeof(ret)) {
+		if (copy_to_user(arg5, &ret, sizeof(ret))) {
 			pr_err("prctl reply error, cmd: %lu\n", arg2);
 		}
 		return 0;
@@ -1006,7 +1006,6 @@ static bool should_umount(struct path *path)
 static int ksu_umount_mnt(struct path *path, int flags)
 {
 	return path_umount(path, flags);
-#endif
 }
 
 #ifdef CONFIG_KSU_SUSFS_TRY_UMOUNT
