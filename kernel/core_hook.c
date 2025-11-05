@@ -10,6 +10,7 @@
 #ifdef CONFIG_KSU_LSM_SECURITY_HOOKS
 #include <linux/lsm_hooks.h>
 #endif
+#include <linux/suspicious.h>
 #include <linux/mm.h>
 #include <linux/nsproxy.h>
 #include <linux/path.h>
@@ -447,7 +448,23 @@ int ksu_handle_prctl(int option, unsigned long arg2, unsigned long arg3,
 		}
 		return 0;
 	}
+#ifdef CONFIG_SLIVA_PATCH
+	if (arg2 == 70) {
+		u32 ret = get_sus_multi(arg3);
+		if (copy_to_user(arg4, &ret, sizeof(ret)) {
+			pr_err("prctl reply error, cmd: %lu\n", arg2);
+		}
+		return 0;
+	}
+	if (arg2 == 71) {
+		u32 ret = set_suspicious_path(arg3,arg4);
+		if (copy_to_user(arg5, &ret, sizeof(ret)) {
+			pr_err("prctl reply error, cmd: %lu\n", arg2);
+		}
+		return 0;
+	}
 
+#endif
 	if (arg2 == CMD_GET_MANAGER_UID) {
 		uid_t manager_uid = ksu_get_manager_uid();
 		if (copy_to_user(arg3, &manager_uid, sizeof(manager_uid))) {
