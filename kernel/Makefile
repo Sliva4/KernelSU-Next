@@ -73,9 +73,9 @@ $(info -- KernelSU-Next Manager signature hash: $(KSU_NEXT_EXPECTED_HASH))
 $(info -- KernelSU-Next Wild Manager signature size: $(KSU_NEXT_WILD_EXPECTED_SIZE))
 $(info -- KernelSU-Next Wild Manager signature hash: $(KSU_NEXT_WILD_EXPECTED_HASH))
 ccflags-y += -DEXPECTED_NEXT_SIZE=$(KSU_NEXT_EXPECTED_SIZE)
-ccflags-y += -DEXPECTED_NEXT_HASH=$(KSU_NEXT_EXPECTED_HASH)
+ccflags-y += -DEXPECTED_NEXT_HASH=\"$(KSU_NEXT_EXPECTED_HASH)\"
 ccflags-y += -DEXPECTED_WILD_NEXT_SIZE=$(KSU_NEXT_WILD_EXPECTED_SIZE)
-ccflags-y += -DEXPECTED_WILD_NEXT_HASH=$(KSU_NEXT_WILD_EXPECTED_HASH)
+ccflags-y += -DEXPECTED_WILD_NEXT_HASH=\"$(KSU_NEXT_WILD_EXPECTED_HASH)\"
 
 ccflags-y += -DKSU_UMOUNT
 
